@@ -10,4 +10,10 @@ if (!($versionBroadcast instanceof VersionBroadcast)) {
     return;
 }
 
-return $versionBroadcast->run();
+$output = $versionBroadcast->run();
+if ($output === null) {
+    return;
+}
+
+echo $output;
+die();
