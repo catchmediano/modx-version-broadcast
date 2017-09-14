@@ -60,19 +60,40 @@ class VersionBroadcast {
             return false;
         }
 
-        $uriTarget = self::cleanUri($this->modx->getOption('versionbroadcast.uri', null, ''));
-        if (strlen($uriTarget) === 0) {
+        $targetUri = self::cleanUri($this->modx->getOption('versionbroadcast.uri', null, ''));
+        if (strlen($targetUri) === 0) {
             return false;
         }
 
-        $uriCurrent = self::cleanUri($uri);
+        $currentUri = self::cleanUri($uri);
 
-        return $uriCurrent === $uriTarget;
+        return $targetUri === $currentUri;
     }
 
     private function isValidToken()
     {
-        return true;
+        $param = $this->modx->getOption('versionbroadcast.token_param', null, 'token');
+        if (!isset($_REQUEST[$param])) {
+            return false;
+        }
+
+        $currentToken = $_REQUEST[$param];
+        if (strlen($currentToken) === 0) {
+            return false;
+        }
+
+        $secret = $this->modx->getOption('versionbroadcast.secret', null, '');
+        if ($secret === null or strlen($secret) === 0) {
+            // Refuse to do request if no secret value is recorded
+            return false;
+        }
+
+        $salt = $this->modx->getOption('versionbroadcast.salt', null, '');
+        if (strlen($salt) === 0) {
+            $salt = '';
+        }
+
+        return password_verify(self::generateTokenInput($secret, $salt), $currentToken);
     }
 
     private function outputVersion()
@@ -91,5 +112,17 @@ class VersionBroadcast {
         }
 
         return trim($uri);
+    }
+
+    private static function generateTokenInput($secret, $salt)
+    {
+        return $secret . ',,' . $salt;
+    }
+
+    private static function generateToken($secret, $salt)
+    {
+        // We could supplement the password_hash function with the salt parameter, but this option is deprecated
+        // for newer versions of PHP. We therefore just string append the salt to the secret value.
+        return password_hash(self::generateTokenInput($secret, $salt), \PASSWORD_BCRYPT);
     }
 }
