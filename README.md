@@ -6,7 +6,9 @@ The endpoint is securet by a token that has to be generated with a given key.
 
 ## Requirements
 
-This extra makes uses of the [`password_hash`](http://php.net/password_hash) and [`password_verify`](http://php.net/password_verify) functions in PHP. These were introduces in version 5.5. This is therefore the minimal requirement.
+This extra makes uses of the [`password_hash`](http://php.net/password_hash) and [`password_verify`](http://php.net/password_verify) functions in PHP. These were introduces in PHP 5.5. This is therefore the minimal requirement.
+
+
 
 ## Generate key
 
