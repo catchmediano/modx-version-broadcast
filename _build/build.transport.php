@@ -9,6 +9,7 @@ $sources = [
     'options' => $root . '_build/options/',
     'attributes' => $root . '_build/attributes/',
     'resolvers' => $root . '_build/resolvers/',
+    'plugins' => $root . 'core/components/versionbroadcast/elements/plugins/',
 ];
 
 /**
@@ -35,6 +36,8 @@ $builder = new \modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE);
 $builder->registerNamespace(PKG_NAME_LOWER, false, true,'{core_path}components/' . PKG_NAME_LOWER . '/', '{assets_path}components/' . PKG_NAME_LOWER . '/');
 
+$modx->log(\xPDO::LOG_LEVEL_INFO, 'Create package');
+
 /**
  *  Add plugin(s)
  */
@@ -47,14 +50,18 @@ foreach ($pluginList as $pluginArr) {
     unset($pluginArr['events']);
 
     $plugin = $modx->newObject('modPlugin');
-    $plugin->fromArray($pluginArr);
+    $plugin->fromArray($pluginArr, '', true, true);
+
+    $modx->log(\xPDO::LOG_LEVEL_INFO, 'Adding plugin from array: ' . print_r($pluginArr, true));
 
     $events = [];
     if (count($eventsList) > 0) {
         foreach ($eventsList as $eventsArr) {
             $event = $modx->newObject('modPluginEvent');
-            $event->fromArray($eventsArr);
+            $event->fromArray($eventsArr, '', true, true);
             $events[] = $event;
+
+            $modx->log(\xPDO::LOG_LEVEL_INFO, 'Adding event for plugin from array: ' . print_r($eventsArr, true));
         }
 
         $plugin->addMany($events);
@@ -73,7 +80,9 @@ $settingsAttributes = include $sources['attributes'] . 'settings.php';
 
 foreach ($settingsList as $settingsArr) {
     $setting = $modx->newObject('modSystemSetting');
-    $setting->fromArray($settingsArr);
+    $setting->fromArray($settingsArr, '', true, true);
+
+    $modx->log(\xPDO::LOG_LEVEL_INFO, 'Adding system setting from array: ' . print_r($settingsArr, true));
 
     $vehicle = $builder->createVehicle($setting, $settingsAttributes);
     $builder->putVehicle($vehicle);
@@ -92,8 +101,12 @@ $builder->setPackageAttributes([
     ]
 ]);
 
+$modx->log(\xPDO::LOG_LEVEL_INFO, 'Sat package attributes');
+
 /**
  *  Build ZIP file
  */
 
 $builder->pack();
+
+$modx->log(\xPDO::LOG_LEVEL_INFO, 'Packed the component');
