@@ -10,6 +10,7 @@ $sources = [
     'attributes' => $root . '_build/attributes/',
     'resolvers' => $root . '_build/resolvers/',
     'plugins' => $root . 'core/components/versionbroadcast/elements/plugins/',
+    'source_core' => $root . 'core/components/' . PKG_NAME_LOWER,
 ];
 
 /**
@@ -37,6 +38,20 @@ $builder->createPackage(PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE);
 $builder->registerNamespace(PKG_NAME_LOWER, false, true,'{core_path}components/' . PKG_NAME_LOWER . '/', '{assets_path}components/' . PKG_NAME_LOWER . '/');
 
 $modx->log(\xPDO::LOG_LEVEL_INFO, 'Create package');
+
+
+/**
+ *  Create category
+ */
+
+$categoryArr = include $sources['data'] . 'category.php';
+$categoryAttributes = include $sources['attributes'] . 'category.php';
+$category = $modx->newObject('modCategory');
+$category->fromArray($categoryArr, '', true, true);
+
+$modx->log(\xPDO::LOG_LEVEL_INFO, 'Creating category from array: ' . print_r($categoryArr, true));
+
+$categoryVehicle = $builder->createVehicle($category, $categoryAttributes);
 
 /**
  *  Add plugin(s)
@@ -87,6 +102,21 @@ foreach ($settingsList as $settingsArr) {
     $vehicle = $builder->createVehicle($setting, $settingsAttributes);
     $builder->putVehicle($vehicle);
 }
+
+/**
+ *  Resolvers
+ */
+
+$categoryVehicle->resolve('file', [
+    'source' => $sources['source_core'],
+    'target' => "return MODX_CORE_PATH . 'components/';",
+]);
+
+$categoryVehicle->resolve('php', [
+    'source' => $sources['resolvers'] . 'setupoptions.php'
+]);
+
+$builder->putVehicle($categoryVehicle);
 
 /**
  *  Add files

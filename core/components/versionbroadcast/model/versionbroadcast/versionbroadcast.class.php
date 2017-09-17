@@ -48,6 +48,54 @@ class VersionBroadcast {
         ]);
     }
 
+    public function isValidConfiguration($fetchRaw = false)
+    {
+        $targetUri = $this->getSystemSetting('versionbroadcast.uri', $fetchRaw);
+        $secret = $this->getSystemSetting('versionbroadcast.secret', $fetchRaw);
+
+        $configs = [$targetUri, $secret];
+        foreach($configs as $config) {
+            if ($config === null or strlen($config) === 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getEndpoint($fetchRaw = false)
+    {
+        $targetUri = self::cleanUri($this->getSystemSetting('versionbroadcast.uri', $fetchRaw));
+        $param = $this->getSystemSetting('versionbroadcast.token_param', $fetchRaw, 'token');
+        $secret = $this->getSystemSetting('versionbroadcast.secret', $fetchRaw);
+        $salt = $this->getSystemSetting('versionbroadcast.salt', $fetchRaw);
+
+        return $targetUri . '?' . $param . '=' . self::generateToken($secret, $salt);
+    }
+
+    private function getSystemSetting($key, $raw, $default = '')
+    {
+        // I am not very proud of this function. Because of a bug (?) it does not work to clear the system setting values
+        // while executing from the setup options resolver. This results in getOption returning the old (empty) value
+        // even if we have overriden the value in the resolver. This method is used to get around this problem, by fetching
+        // the data via SQL queries instead.
+
+        if ($raw) {
+            $obj = $this->modx->getObject('modSystemSetting', $key);
+            if (!$obj) {
+                return $default;
+            }
+
+            if ($obj->get('value') === null) {
+                return $default;
+            }
+
+            return $obj->get('value');
+        }
+
+        return $this->modx->getOption($key, null, $default);
+    }
+
     private function isValidUri()
     {
         $param = $this->modx->getOption('request_param_alias',null,'q');

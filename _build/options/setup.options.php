@@ -28,7 +28,7 @@ $html = '
 </div>
 <div style="padding-bottom: 15px">
 <p style="padding-bottom: 10px">Set the settings for Version Broadcast below. Because we expose the version of the MODX installation, <strong>it is important to keep these settings secure to avoid leaking this information.</strong></p>
-<p>When installation is finished, the REST endpoint URL is presented. This URL is not stored in clear text anywhere in the installation for security reasons. If you lose the URL, you can either reistall this extra to regenerate it, or you can follow the steps presented in the README to generate it yourself.</p>
+<p>When installation is finished, the REST endpoint URL is presented in the installation Console. This URL is not stored in clear text anywhere in the installation for security reasons. If you lose the URL, you can either reinstall this extra to regenerate it, or you can follow the steps presented <a href="https://github.com/catchmediano/modx-version-broadcast" target="_blank">here</a> to generate it yourself.</p>
 </div>
 <div style="padding-bottom: 15px">
     <label for="[[+secret_key]]">Secret</label>
