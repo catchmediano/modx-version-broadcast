@@ -10,10 +10,7 @@ if (!($versionBroadcast instanceof VersionBroadcast)) {
     return;
 }
 
-$output = $versionBroadcast->run();
-if ($output === null) {
-    return;
+if ($versionBroadcast->isValidateRequest()) {
+    echo $versionBroadcast->outputVersion();
+    die();
 }
-
-echo $output;
-die();

@@ -1,13 +1,13 @@
 <?php
 return [
     [
-        'key' => 'versionbroadcast.salt',
+        'key' => 'versionbroadcast.secret',
         'value' => '',
         'xtype' => 'textfield',
         'namespace' => 'versionbroadcast',
         'area' => '',
     ], [
-        'key' => 'versionbroadcast.secret',
+        'key' => 'versionbroadcast.salt',
         'value' => '',
         'xtype' => 'textfield',
         'namespace' => 'versionbroadcast',
@@ -15,6 +15,12 @@ return [
     ], [
         'key' => 'versionbroadcast.uri',
         'value' => 'rest/version-broadcast',
+        'xtype' => 'textfield',
+        'namespace' => 'versionbroadcast',
+        'area' => '',
+    ], [
+        'key' => 'versionbroadcast.token_param',
+        'value' => 'token',
         'xtype' => 'textfield',
         'namespace' => 'versionbroadcast',
         'area' => '',

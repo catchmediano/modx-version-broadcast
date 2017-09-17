@@ -22,16 +22,7 @@ class VersionBroadcast {
         $this->modx->addPackage('versionbroadcast', $this->config['modelPath']);
     }
 
-    public function run()
-    {
-        if (!$this->validateRequest()) {
-            return null;
-        }
-
-        return $this->outputVersion();
-    }
-
-    private function validateRequest()
+    public function isValidateRequest()
     {
         if (!$this->modx->getOption('friendly_urls')) {
             return false;
@@ -46,6 +37,15 @@ class VersionBroadcast {
         }
 
         return true;
+    }
+
+    public function outputVersion()
+    {
+        header('Content-Type: application/json');
+
+        return json_encode([
+            'version' => $this->modx->getOption('settings_version')
+        ]);
     }
 
     private function isValidUri()
@@ -85,6 +85,8 @@ class VersionBroadcast {
         $secret = $this->modx->getOption('versionbroadcast.secret', null, '');
         if ($secret === null or strlen($secret) === 0) {
             // Refuse to do request if no secret value is recorded
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Refused to expose version. Missing secret value!');
+
             return false;
         }
 
@@ -94,15 +96,6 @@ class VersionBroadcast {
         }
 
         return password_verify(self::generateTokenInput($secret, $salt), $currentToken);
-    }
-
-    private function outputVersion()
-    {
-        header('Content-Type: application/json');
-
-        return json_encode([
-            'version' => $this->modx->getOption('settings_version')
-        ]);
     }
 
     private static function cleanUri($uri)

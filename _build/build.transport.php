@@ -6,13 +6,9 @@ $sources = [
     'root' => $root,
     'build' => $root . '_build/',
     'data' => $root . '_build/data/',
+    'options' => $root . '_build/options/',
     'attributes' => $root . '_build/attributes/',
-    'snippets' => $root . 'core/components/' . PKG_NAME_LOWER . '/elements/snippets/',
-    'lexicon' => $root . 'core/components/' . PKG_NAME_LOWER . '/lexicon/',
-    'docs' => $root . 'core/components/' . PKG_NAME_LOWER . '/docs/',
-    'source_assets' => $root . 'assets/components/' . PKG_NAME_LOWER,
-    'source_core' => $root . 'core/components/' . PKG_NAME_LOWER,
-    'resolvers' => $root . '_build/resolvers/'
+    'resolvers' => $root . '_build/resolvers/',
 ];
 
 /**
@@ -87,13 +83,14 @@ foreach ($settingsList as $settingsArr) {
  *  Add files
  */
 
-/*
-$builder->setPackageAttributes(array(
-    'license' => file_get_contents($sources['docs'] . 'license.txt'),
-    'readme' => file_get_contents($sources['docs'] . 'readme.txt'),
-    'changelog' => file_get_contents($sources['docs'] . 'changelog.txt'),
-));
-*/
+$builder->setPackageAttributes([
+    'license' => file_get_contents($sources['root'] . 'LICENSE'),
+    'readme' => file_get_contents($sources['root'] . 'README.md'),
+    'changelog' => file_get_contents($sources['root'] . 'changelog.txt'),
+    'setup-options' => [
+        'source' => $sources['options'] . 'setup.options.php'
+    ]
+]);
 
 /**
  *  Build ZIP file
